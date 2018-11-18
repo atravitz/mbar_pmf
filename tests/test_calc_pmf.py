@@ -27,3 +27,10 @@ class TestMBAR(unittest.TestCase):
             df_wham = pd.read_table(WHAM_PATH, comment='#', usecols=[0, 1], skiprows=2, names=['dist', 'pmf'])
             df_mbar = pd.read_table(MBAR_PATH, delimiter=',', comment='#', skiprows=2, names=['dist', 'pmf', 'error'])
             self.assertTrue(np.allclose(df_wham.pmf, df_mbar.pmf, rtol=0.3, atol=0.3))
+
+
+class TestFailWell(unittest.TestCase):
+    def testNoArgs(self):
+        test_input = []
+        if logger.isEnabledFor(logging.DEBUG):
+            main(test_input)

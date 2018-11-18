@@ -54,6 +54,7 @@ def mbar(workspace_path, output_name=DEF_OUTPUT_FILE):
     k = 100
     r0_min = 127
     r0_max = 155
+    n_rows_to_skip = 0
     # Allocate storage for simulation data_dump
     N_k = np.zeros([n_windows], dtype=int)  # number of data points from umbrella window k
     K_k = np.ones([n_windows]) * k  # spring constant for all umbrella simulations
@@ -125,12 +126,15 @@ def mbar(workspace_path, output_name=DEF_OUTPUT_FILE):
     np.savetxt(output_path, np.c_[bin_center_i, f_i, df_i], fmt='%.8f', delimiter=',', header="r_0, f_i, df_i")
     print('written to ', output_path)
 
-def main():
-    pass
-    # testing
-    # path = 'data'
-    # mbar(workspace_path, total_windows, n_windows, k, r0_min, r0_max)
+def main(argv=None):
+   args, ret = parse_cmdline(argv)
+   if ret != 0 or args is None:
+       return ret
 
+   mbar(args.data_dir, args.output_file)
+
+   return 0  # success
 
 if __name__ == '__main__':
-    main()
+    status = main()
+    sys.exit(status)
