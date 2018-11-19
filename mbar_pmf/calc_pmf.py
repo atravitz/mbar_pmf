@@ -9,16 +9,15 @@ import pandas as pd
 import pymbar
 from pymbar import timeseries
 import sys
+from libs.common import warning
+
 
 DEF_OUTPUT_FILE = 'mbar_pmf.txt'
 GOOD_RET = 0
 INPUT_ERROR = 1
 IO_ERROR = 2
 INVALID_DATA = 3
-
-def warning(*objs):
-    """Writes a message to stderr."""
-    print("WARNING: ", *objs, file=sys.stderr)
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def parse_cmdline(argv):
@@ -36,7 +35,7 @@ def parse_cmdline(argv):
                         help="Location of the dictionary file to be modified. "
                              "The default is: '{}'".format(DEF_OUTPUT_FILE), default=DEF_OUTPUT_FILE)
 
-    parser.add_argument("data_dir", help="path to the data directory", type=str)
+    parser.add_argument("data_dir", help="path to the data directory")
 
     args = None
     try:
@@ -47,6 +46,10 @@ def parse_cmdline(argv):
         warning(e)
         parser.print_help()
         return args, INPUT_ERROR
+
+    if not os.path.exists(args.data_dir):
+        warning('The data directory "{}/{}" does not exist!'.format(__file__, args.data_dir))
+        return args, INVALID_DATA
 
     return args, GOOD_RET
 
