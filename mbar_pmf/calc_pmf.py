@@ -11,6 +11,36 @@ from pymbar import timeseries
 import sys
 
 DEF_OUTPUT_FILE = 'mbar_pmf.txt'
+GOOD_RET = 0
+INPUT_ERROR = 1
+IO_ERROR = 2
+INVALID_DATA = 3
+
+def warning(*objs):
+    """Writes a message to stderr."""
+    print("WARNING: ", *objs, file=sys.stderr)
+
+# From http://schinckel.net/2013/04/15/capture-and-test-sys.stdout-sys.stderr-in-unittest.testcase/
+@contextmanager
+def capture_stdout(command, *args, **kwargs):
+    # pycharm doesn't know six very well, so ignore the false warning
+    # noinspection PyCallingNonCallable
+    out, sys.stdout = sys.stdout, six.StringIO()
+    command(*args, **kwargs)
+    sys.stdout.seek(0)
+    yield sys.stdout.read()
+    sys.stdout = out
+
+
+@contextmanager
+def capture_stderr(command, *args, **kwargs):
+    # pycharm doesn't know six very well, so ignore the false warning
+    # noinspection PyCallingNonCallable
+    err, sys.stderr = sys.stderr, six.StringIO()
+    command(*args, **kwargs)
+    sys.stderr.seek(0)
+    yield sys.stderr.read()
+    sys.stderr = err
 
 
 def parse_cmdline(argv):
@@ -28,19 +58,19 @@ def parse_cmdline(argv):
                         help="Location of the dictionary file to be modified. "
                              "The default is: '{}'".format(DEF_OUTPUT_FILE), default=DEF_OUTPUT_FILE)
 
-    parser.add_argument("-d", "--data_dir", help="path to the data directory", type=str)
+    parser.add_argument("data_dir", help="path to the data directory", type=str)
 
     args = None
     try:
         args = parser.parse_args(argv)
-    except (InvalidDataError, IOError, DuplicateOptionError, SystemExit) as e:
+    except (IOError, SystemExit) as e:
         if hasattr(e, 'code') and e.code == 0:
-            return args, 0
+            return args, GOOD_RET
         warning(e)
         parser.print_help()
         return args, INPUT_ERROR
 
-    return args, 0
+    return args, GOOD_RET
 
 
 def mbar(workspace_path, output_name=DEF_OUTPUT_FILE):
@@ -126,14 +156,15 @@ def mbar(workspace_path, output_name=DEF_OUTPUT_FILE):
     np.savetxt(output_path, np.c_[bin_center_i, f_i, df_i], fmt='%.8f', delimiter=',', header="r_0, f_i, df_i")
     print('written to ', output_path)
 
+
 def main(argv=None):
-   args, ret = parse_cmdline(argv)
-   if ret != 0 or args is None:
-       return ret
+    args, ret = parse_cmdline(argv)
+    if ret != 0 or args is None:
+        return ret
 
-   mbar(args.data_dir, args.output_file)
+    mbar(args.data_dir, args.output_file)
 
-   return 0  # success
+    return 0  # success
 
 if __name__ == '__main__':
     status = main()

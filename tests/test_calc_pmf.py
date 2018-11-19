@@ -5,13 +5,10 @@ import sys
 sys.path.append('../')
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 import pandas as pd
 import unittest
+from mbar_pmf.calc_pmf import main
 from mbar_pmf.calc_pmf import mbar
-# logging.basigConfig(level=logging.INFO)
-# logger = logging.getLogger(__name__)
-# DISABLE_REMOVE = logger.isEnabledFor(logging.DEBUG)
 
 WHAM_PATH = 'wham_pmf.csv'
 MBAR_PATH = 'mbar_pmf_test.txt'
@@ -32,5 +29,13 @@ class TestMBAR(unittest.TestCase):
 class TestFailWell(unittest.TestCase):
     def testNoArgs(self):
         test_input = []
-        if logger.isEnabledFor(logging.DEBUG):
-            main(test_input)
+        main(test_input)
+
+    def testHelp(self):
+        test_input = ["-h"]
+
+        main(test_input)
+        with capture_stderr(main, test_input) as output:
+            self.assertFalse(output)
+        with capture_stdout(main, test_input) as output:
+            self.assertTrue("optional arguments" in output)
