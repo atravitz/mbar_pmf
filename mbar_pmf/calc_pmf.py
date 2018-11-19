@@ -20,28 +20,6 @@ def warning(*objs):
     """Writes a message to stderr."""
     print("WARNING: ", *objs, file=sys.stderr)
 
-# From http://schinckel.net/2013/04/15/capture-and-test-sys.stdout-sys.stderr-in-unittest.testcase/
-@contextmanager
-def capture_stdout(command, *args, **kwargs):
-    # pycharm doesn't know six very well, so ignore the false warning
-    # noinspection PyCallingNonCallable
-    out, sys.stdout = sys.stdout, six.StringIO()
-    command(*args, **kwargs)
-    sys.stdout.seek(0)
-    yield sys.stdout.read()
-    sys.stdout = out
-
-
-@contextmanager
-def capture_stderr(command, *args, **kwargs):
-    # pycharm doesn't know six very well, so ignore the false warning
-    # noinspection PyCallingNonCallable
-    err, sys.stderr = sys.stderr, six.StringIO()
-    command(*args, **kwargs)
-    sys.stderr.seek(0)
-    yield sys.stderr.read()
-    sys.stderr = err
-
 
 def parse_cmdline(argv):
     """

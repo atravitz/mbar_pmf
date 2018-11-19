@@ -2,13 +2,13 @@
 Tests for run_mbar.py
 """
 import sys
-sys.path.append('../')
 import numpy as np
 import os
 import pandas as pd
 import unittest
 from mbar_pmf.calc_pmf import main
 from mbar_pmf.calc_pmf import mbar
+from libs.common import capture_stdout, capture_stderr, diff_lines, silent_remove
 
 WHAM_PATH = 'wham_pmf.csv'
 MBAR_PATH = 'mbar_pmf_test.txt'
