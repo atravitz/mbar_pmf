@@ -21,11 +21,7 @@ Or clone the repo:
 
     $ git clone https://github.com/atravitz/mbar_pmf.git
     $ python setup.py install
-    
-Contributing
-------------
-
-TBD
+  
 
 Example
 -------
